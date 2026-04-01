@@ -41,6 +41,12 @@
         <span class="menu-title">Cetak Data</span>
     </a>
 </li>
+
+<li class="nav-item {{ request()->is('kota*') ? 'active' : '' }}">
+    <a class="nav-link" href="{{ url('/kota') }}">
+        <span class="menu-title">Kota</span>
+    </a>
+</li>
           </ul>
         </nav>
 

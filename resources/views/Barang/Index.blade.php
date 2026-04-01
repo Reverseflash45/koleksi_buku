@@ -1,150 +1,210 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>CRUD Barang</title>
 
-<title>Data Barang</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            width: 60%;
+        }
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
 
+        tr:hover {
+            cursor: pointer;
+            background: #f2f2f2;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-green { background: green; }
+        .btn-red { background: red; }
+
+        .spinner { display: none; }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            margin: 10% auto;
+            width: 300px;
+        }
+    </style>
 </head>
-
 <body>
 
-<h2>Data Barang</h2>
+<h2>Tambah Barang</h2>
 
-<!-- ========================
-FORM CETAK LABEL
-======================== -->
+<form id="formBarang">
+    Nama:<br>
+    <input type="text" id="nama" required><br><br>
 
-<form action="{{ route('cetak.label') }}" method="POST">
+    Harga:<br>
+    <input type="number" id="harga" required><br><br>
+</form>
 
-@csrf
+<button type="button" id="btnSubmit" class="btn btn-green">Submit</button>
+<span id="spinner" class="spinner">⏳ Loading...</span>
 
-<label>Koordinat X</label>
-<input type="number" name="x" required min="1" max="5">
+<hr>
 
-<label>Koordinat Y</label>
-<input type="number" name="y" required min="1" max="8">
+<h3>Data Barang</h3>
 
-<br><br>
-
-<table id="tableBarang" border="1" cellpadding="6">
-
+<table id="tableBarang">
 <thead>
-
 <tr>
-<th>Pilih</th>
 <th>ID</th>
 <th>Nama</th>
 <th>Harga</th>
 </tr>
-
 </thead>
-
-<tbody>
-
-@foreach($barang as $b)
-
-<tr>
-
-<td>
-<input type="checkbox" name="barang[]" value="{{ $b->id_barang }}">
-</td>
-
-<td>{{ $b->id_barang }}</td>
-<td>{{ $b->nama }}</td>
-<td>Rp {{ number_format($b->harga) }}</td>
-
-</tr>
-
-@endforeach
-
-</tbody>
-
+<tbody></tbody>
 </table>
 
-<br>
+<!-- MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-content">
 
-<button type="submit">Cetak Label</button>
+        <form id="formEdit">
 
-</form>
+            ID:<br>
+            <input type="text" id="editId" readonly><br><br>
 
-<hr>
+            Nama:<br>
+            <input type="text" id="editNama" required><br><br>
 
-<!-- ========================
-TAMBAH BARANG
-======================== -->
+            Harga:<br>
+            <input type="number" id="editHarga" required><br><br>
 
-<h3>Tambah Barang</h3>
+        </form>
 
-<form action="/barang/tambah" method="POST">
+        <button id="btnHapus" class="btn btn-red">Hapus</button>
+        <button id="btnUbah" class="btn btn-green">Ubah</button>
+        <span id="spinnerEdit" class="spinner">⏳</span>
 
-@csrf
-
-<label>Nama Barang</label>
-<input type="text" name="nama" required>
-
-<label>Harga</label>
-<input type="number" name="harga" required>
-
-<button type="submit">Tambah</button>
-
-</form>
-
-<hr>
-
-<!-- ========================
-DAFTAR BARANG + HAPUS
-======================== -->
-
-<h3>Daftar Barang</h3>
-
-<table border="1" cellpadding="6">
-
-<tr>
-<th>ID</th>
-<th>Nama</th>
-<th>Harga</th>
-<th>Aksi</th>
-</tr>
-
-@foreach($barang as $b)
-
-<tr>
-
-<td>{{ $b->id_barang }}</td>
-<td>{{ $b->nama }}</td>
-<td>{{ $b->harga }}</td>
-
-<td>
-
-<form action="/barang/hapus/{{ $b->id_barang }}" method="POST">
-
-@csrf
-
-<button type="submit">Hapus</button>
-
-</form>
-
-</td>
-
-</tr>
-
-@endforeach
-
-</table>
-
+    </div>
+</div>
 
 <script>
 
-$(document).ready(function(){
+let idCounter = 1;
+let selectedRow = null;
 
-$('#tableBarang').DataTable();
+/* ================= TAMBAH ================= */
+document.getElementById("btnSubmit").onclick = function(){
 
-});
+    let form = document.getElementById("formBarang");
+
+    if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+    }
+
+    let btn = this;
+    let spinner = document.getElementById("spinner");
+
+    btn.style.display = "none";
+    spinner.style.display = "inline";
+
+    setTimeout(() => {
+
+        let nama = document.getElementById("nama").value;
+        let harga = document.getElementById("harga").value;
+
+        let table = document.querySelector("#tableBarang tbody");
+        let row = table.insertRow();
+
+        row.insertCell(0).innerHTML = idCounter++;
+        row.insertCell(1).innerHTML = nama;
+        row.insertCell(2).innerHTML = "Rp " + Number(harga).toLocaleString();
+
+        // klik row → buka modal
+        row.onclick = function(){
+            selectedRow = this;
+
+            document.getElementById("editId").value = this.cells[0].innerText;
+            document.getElementById("editNama").value = this.cells[1].innerText;
+            document.getElementById("editHarga").value =
+                this.cells[2].innerText.replace(/[^\d]/g, '');
+
+            document.getElementById("modal").style.display = "block";
+        };
+
+        form.reset();
+        btn.style.display = "inline";
+        spinner.style.display = "none";
+
+    }, 800);
+};
+
+
+/* ================= HAPUS ================= */
+document.getElementById("btnHapus").onclick = function(){
+
+    if(selectedRow){
+        selectedRow.remove();
+        document.getElementById("modal").style.display = "none";
+    }
+
+};
+
+
+/* ================= UPDATE ================= */
+document.getElementById("btnUbah").onclick = function(){
+
+    let form = document.getElementById("formEdit");
+
+    if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+    }
+
+    let spinner = document.getElementById("spinnerEdit");
+    spinner.style.display = "inline";
+
+    setTimeout(() => {
+
+        let nama = document.getElementById("editNama").value;
+        let harga = document.getElementById("editHarga").value;
+
+        selectedRow.cells[1].innerHTML = nama;
+        selectedRow.cells[2].innerHTML = "Rp " + Number(harga).toLocaleString();
+
+        spinner.style.display = "none";
+        document.getElementById("modal").style.display = "none";
+
+    }, 800);
+};
+
+
+/* ================= CLOSE MODAL ================= */
+window.onclick = function(e){
+    let modal = document.getElementById("modal");
+    if(e.target == modal){
+        modal.style.display = "none";
+    }
+};
 
 </script>
 

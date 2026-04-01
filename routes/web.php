@@ -173,5 +173,9 @@ Route::post('/barang/hapus/{id}', function ($id) {
 
 });
 
+Route::get('/kota', function () {
+    return view('kota.index');
+});
 
 Route::post('/cetak-label', [PdfController::class,'cetakLabel'])->name('cetak.label');
+
