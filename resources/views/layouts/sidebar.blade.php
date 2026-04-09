@@ -47,6 +47,19 @@
         <span class="menu-title">Kota</span>
     </a>
 </li>
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ url('/wilayah') }}">
+        <span class="menu-title">Wilayah</span>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ url('/pos') }}">
+        <span class="menu-title">POS</span>
+    </a>
+</li>
+
           </ul>
         </nav>
 

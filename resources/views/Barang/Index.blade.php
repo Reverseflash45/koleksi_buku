@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CRUD Barang</title>
+    <title>Barang</title>
 
     <style>
         body { font-family: Arial; padding: 20px; }
@@ -157,7 +157,6 @@ document.getElementById("btnSubmit").onclick = function(){
 
     }, 800);
 };
-
 
 /* ================= HAPUS ================= */
 document.getElementById("btnHapus").onclick = function(){
