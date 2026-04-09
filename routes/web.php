@@ -147,3 +147,12 @@ Route::get('/get-kelurahan/{id}', [WilayahController::class, 'getKelurahan']);
 Route::get('/pos', [POSController::class, 'index']);
 Route::get('/barang/{kode}', [POSController::class, 'getBarang']);
 Route::post('/bayar', [POSController::class, 'bayar']);
+// Route untuk ambil satu data barang via Axios
+Route::get('/barang-get/{kode}', [App\Http\Controllers\POSController::class, 'getBarang']);
+
+// Route untuk proses bayar
+Route::post('/bayar', [App\Http\Controllers\POSController::class, 'bayar']);
+
+Route::get('/barang', [BarangController::class, 'index']);
+Route::post('/barang-store', [BarangController::class, 'store']);
+Route::delete('/barang-delete/{id}', [BarangController::class, 'delete']);

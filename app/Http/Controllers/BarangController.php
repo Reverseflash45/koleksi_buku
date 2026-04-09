@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -7,53 +6,31 @@ use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
 {
-    // Menampilkan halaman utama
-    public function index()
-    {
-        return view('Barang.Index'); // Pastikan huruf besar/kecil sesuai nama file view kamu
-    }
+public function index() {
+    // Ganti 'barangs' menjadi 'barang'
+    $barangs = DB::table('barang')->get(); 
+    return view('Barang.Index', compact('barangs'));
+}
 
-    // Mengambil data untuk ditampilkan di tabel
-    public function data()
-    {
-        $barang = DB::table('barang')->get();
-        return response()->json($barang);
-    }
+public function store(Request $req) {
+    $req->validate([
+        'nama_barang' => 'required',
+        'harga' => 'required|numeric'
+    ]);
 
-    // Menyimpan data baru
-    public function store(Request $req)
-    {
-        $id = uniqid();
+    DB::table('barang')->insert([
+        'id_barang' => rand(100, 999), // Menambahkan ID acak agar database tidak error
+        'nama' => $req->nama_barang,
+        'harga' => $req->harga,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
 
-        DB::table('barang')->insert([
-            'id_barang' => $id,
-            'nama' => $req->nama,
-            'harga' => $req->harga
-        ]);
+    return redirect()->back()->with('success', 'Barang berhasil ditambah!');
+}
 
-        return response()->json(['success' => true, 'pesan' => 'Berhasil ditambah']);
-    }
-
-    // Mengubah data
-    public function update(Request $req)
-    {
-        DB::table('barang')
-            ->where('id_barang', $req->id)
-            ->update([
-                'nama' => $req->nama,
-                'harga' => $req->harga
-            ]);
-
-        return response()->json(['success' => true, 'pesan' => 'Berhasil diubah']);
-    }
-
-    // Menghapus data
-    public function delete(Request $req)
-    {
-        DB::table('barang')
-            ->where('id_barang', $req->id)
-            ->delete();
-
-        return response()->json(['success' => true, 'pesan' => 'Berhasil dihapus']);
+    public function delete($id) {
+        DB::table('barangs')->where('id', $id)->delete();
+        return redirect()->back()->with('success', 'Barang berhasil dihapus!');
     }
 }

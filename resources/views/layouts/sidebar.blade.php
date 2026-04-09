@@ -47,7 +47,7 @@
 
         <li class="nav-item {{ request()->is('barang*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ url('/barang') }}">
-                <span class="menu-title">Cetak Data</span>
+                <span class="menu-title">Tambah Barang</span>
                 <i class="mdi mdi-printer menu-icon"></i>
             </a>
         </li>
@@ -70,6 +70,11 @@
             <a class="nav-link" href="{{ url('/pos') }}">
                 <span class="menu-title">POS</span>
                 <i class="mdi mdi-cart menu-icon"></i>
+
+                        <li class="nav-item {{ request()->is('pos*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ url('/pos') }}">
+                <span class="menu-title">Print Baru</span>
+
             </a>
         </li>
     </ul>

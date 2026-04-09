@@ -1,65 +1,103 @@
-<h2>Wilayah Indonesia</h2>
+@extends('layouts.app')
 
-<select id="provinsi">
-    <option value="">Pilih Provinsi</option>
-    @foreach($provinsi as $p)
-        <option value="{{ $p->id }}">{{ $p->name ?? $p->nama_provinsi ?? $p->province_name }}</option>
-    @endforeach
-</select>
+@section('content')
+<div class="page-header">
+    <h3 class="page-title">
+        <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-map"></i>
+        </span> Wilayah Indonesia
+    </h3>
+</div>
 
-<select id="kota">
-    <option value="">Pilih Kota</option>
-</select>
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Pilih Lokasi</h4>
+                <p class="card-description"> Silahkan pilih wilayah secara berurutan </p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="provinsi">Provinsi</label>
+                            <select id="provinsi" class="form-control form-select border-primary">
+                                <option value="">Pilih Provinsi</option>
+                                @foreach($provinsi as $p)
+                                    <option value="{{ $p->id }}">{{ $p->name ?? $p->nama_provinsi ?? $p->province_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
 
-<select id="kecamatan">
-    <option value="">Pilih Kecamatan</option>
-</select>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="kota">Kota/Kabupaten</label>
+                            <select id="kota" class="form-control form-select border-primary">
+                                <option value="">Pilih Kota</option>
+                            </select>
+                        </div>
+                    </div>
 
-<select id="kelurahan">
-    <option value="">Pilih Kelurahan</option>
-</select>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="kecamatan">Kecamatan</label>
+                            <select id="kecamatan" class="form-control form-select border-primary">
+                                <option value="">Pilih Kecamatan</option>
+                            </select>
+                        </div>
+                    </div>
 
-<input type="text" id="wilayahTerpilih" readonly placeholder="Wilayah terpilih" />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="kelurahan">Kelurahan/Desa</label>
+                            <select id="kelurahan" class="form-control form-select border-primary">
+                                <option value="">Pilih Kelurahan</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <label>Wilayah Terpilih (Ringkasan)</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-gradient-primary text-white">
+                                <i class="mdi mdi-pin"></i>
+                            </span>
+                        </div>
+                        <input type="text" id="wilayahTerpilih" class="form-control" readonly placeholder="Detail wilayah akan muncul di sini..." style="background-color: #f2edf3;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+// JavaScript kamu tetap sama di sini...
 $(document).ready(function() {
     $('#provinsi').on('change', function() {
         const provinsiId = $(this).val();
-
         resetSelect('#kota', 'Pilih Kota');
         resetSelect('#kecamatan', 'Pilih Kecamatan');
         resetSelect('#kelurahan', 'Pilih Kelurahan');
-
-        if (provinsiId) {
-            loadKota(provinsiId);
-        }
-
+        if (provinsiId) { loadKota(provinsiId); }
         updateWilayahTerpilih();
     });
 
     $('#kota').on('change', function() {
         const kotaId = $(this).val();
-
         resetSelect('#kecamatan', 'Pilih Kecamatan');
         resetSelect('#kelurahan', 'Pilih Kelurahan');
-
-        if (kotaId) {
-            loadKecamatan(kotaId);
-        }
-
+        if (kotaId) { loadKecamatan(kotaId); }
         updateWilayahTerpilih();
     });
 
     $('#kecamatan').on('change', function() {
         const kecamatanId = $(this).val();
-
         resetSelect('#kelurahan', 'Pilih Kelurahan');
-
-        if (kecamatanId) {
-            loadKelurahan(kecamatanId);
-        }
-
+        if (kecamatanId) { loadKelurahan(kecamatanId); }
         updateWilayahTerpilih();
     });
 
@@ -100,7 +138,6 @@ function fillSelect(selector, items, valueField, textField, placeholder) {
     const select = $(selector);
     select.empty();
     select.append('<option value="">' + placeholder + '</option>');
-
     if (items && items.length) {
         items.forEach(function(item) {
             const value = item[valueField] || item.id || item.kode || '';
@@ -129,3 +166,4 @@ function updateWilayahTerpilih() {
     $('#wilayahTerpilih').val(chunks.join(' -> '));
 }
 </script>
+@endsection
